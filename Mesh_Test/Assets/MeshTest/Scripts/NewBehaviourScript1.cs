@@ -10,34 +10,34 @@ public class RefTestClass
 
 public class NewBehaviourScript1 : MonoBehaviour
 {
-    
-
+    Vector3 origin = Vector3.zero;
+    public Vector3 a1;
+    public Vector3 a2;
     void Start()
     {
-        int[] ex1 = { 1, 2, 3, 4, 5 };
-        int[] ex2 = { 2, 4, 6, 8 };
-        int[] newArray = new int[5];
-        List<int> ss = new List<int>();
-        ss.AddRange(ex1);
+        //int[] ex1 = { 1, 2, 3, 4, 5 };
+        //int[] ex2 = { 2, 4, 6, 8 };
+        //int[] newArray = new int[5];
+        //List<int> ss = new List<int>();
+        //ss.AddRange(ex1);
 
-        Debug.Log("=========================111=======================");
-        for (int i = 0; i < ss.Count; i++)
-        {
-            Debug.Log(ss[i]);
-        }
-        Debug.Log("=========================222=======================");
+        //Debug.Log("=========================111=======================");
+        //for (int i = 0; i < ss.Count; i++)
+        //{
+        //    Debug.Log(ss[i]);
+        //}
+        //Debug.Log("=========================222=======================");
 
-        ccc(ss);
+        //ccc(ss);
 
-        Debug.Log("=========================333=======================");
-        for (int i = 0; i < ss.Count; i++)
-        {
-            Debug.Log(ss[i]);
-        }
+        //Debug.Log("=========================333=======================");
+        //for (int i = 0; i < ss.Count; i++)
+        //{
+        //    Debug.Log(ss[i]);
+        //}
 
-
-
-
+        Debug.Log(a1 + a2);
+        Debug.Log((a1 + a2)/2f);
 
         //int index = 0;
         //foreach(int num in ex1)
@@ -73,6 +73,16 @@ public class NewBehaviourScript1 : MonoBehaviour
         //{
         //    Debug.Log(" num : " + num);
         //}
+    }
+
+    private void Update()
+    {
+        //a1.nor
+        Debug.DrawRay(origin, a1, Color.red);
+        Debug.DrawRay(origin, a2, Color.blue);
+        Debug.DrawRay(origin, (a1 + a2), Color.cyan);
+        Debug.DrawRay(new Vector3(2,0,0), (a1+a2)/2, Color.blue);
+        Debug.DrawRay(new Vector3(1, 0, 0), (a1 + a2).normalized, Color.blue);
     }
     //public int[] SetSizeArray(int[] aaa, int size, int plusNum)
     //{
