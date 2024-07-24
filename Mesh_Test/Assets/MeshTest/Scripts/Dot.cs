@@ -60,12 +60,20 @@ public class Dot : MonoBehaviour
         originNormals = filter.mesh.normals;
         originTriangls = filter.mesh.triangles;
     }
-    
 
-    //void Update()
-    //{
-    //    foreach(int )
-    //}
+
+    void Update()
+    {
+        filter.mesh.vertices = originVectors;
+        filter.mesh.uv = originUVs;
+        filter.mesh.normals = originNormals;
+        filter.mesh.triangles = originTriangls;
+        for ( int i = 0; i< iterations; i++)
+        {
+            Expand(filter.mesh);
+
+        }
+    }
 
 
     public int[] calcTriIdxs(int s, int e, int re, int add)
