@@ -39,7 +39,8 @@ public class Dot : MonoBehaviour
     public Texture2D texture;
     public string shaderName = "Unlit/Texture";
 
-    [Range(0, 10)] public int iterations = 1;
+    [Range(0, 10)] public int iterations = 0;
+    private int prevNum;
     private int currentIteration = 0;
 
     Vector3[] originVectors;
@@ -59,23 +60,36 @@ public class Dot : MonoBehaviour
         originUVs = filter.mesh.uv;
         originNormals = filter.mesh.normals;
         originTriangls = filter.mesh.triangles;
+        prevNum = iterations;
     }
 
 
     void Update()
     {
+        if (prevNum != iterations)
+        {
+            Repeat(iterations);
+            prevNum = iterations;
+        }
+        
+    }
+    public void ReturnOrigin()
+    {
+        filter.mesh = new Mesh();
         filter.mesh.vertices = originVectors;
         filter.mesh.uv = originUVs;
         filter.mesh.normals = originNormals;
         filter.mesh.triangles = originTriangls;
-        for ( int i = 0; i< iterations; i++)
+    }
+    public void Repeat(int num)
+    {
+        ReturnOrigin();
+        for (int i = 0; i < num; i++)
         {
             Expand(filter.mesh);
 
         }
     }
-
-
     public int[] calcTriIdxs(int s, int e, int re, int add)
     {
         return new int[]{
@@ -149,10 +163,10 @@ public class Dot : MonoBehaviour
             }
 
             vertices.Add(maxTii.centerPos);
-            foreach (Vector3 num in normals)
-            {
-                debugVector(num);
-            }
+            //foreach (Vector3 num in normals)
+            //{
+            //    debugVector(num);
+            //}
             Vector2 newUV = (uvs[refTriangles[i + maxTii.srcIdx]] + uvs[refTriangles[i + maxTii.tarIdx]]) / 2f;
             Vector3 newNormal = (normals[refTriangles[i + maxTii.srcIdx]] + normals[refTriangles[i + maxTii.tarIdx]]).normalized;
             normals.Add(newNormal);
@@ -168,10 +182,10 @@ public class Dot : MonoBehaviour
         mesh.uv = uvs.ToArray();
         mesh.normals = normals.ToArray();
         mesh.triangles = triangles.ToArray();
-        foreach (Vector3 num in normals)
-        {
-            debugVector(num);
-        }
+        //foreach (Vector3 num in normals)
+        //{
+        //    debugVector(num);
+        //}
         //for (int i = 0; i < mesh.triangles.Length; i += 3)
         //{
         //    Vector3 v0 = vertices[mesh.triangles[i]];

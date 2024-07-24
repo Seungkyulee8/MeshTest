@@ -74,15 +74,35 @@ public class NewBehaviourScript1 : MonoBehaviour
         //    Debug.Log(" num : " + num);
         //}
     }
+    public float fieldOfView = 90.0f; // 시야각 설정
 
+    public GameObject enemy;
     private void Update()
     {
         //a1.nor
-        Debug.DrawRay(origin, a1, Color.red);
-        Debug.DrawRay(origin, a2, Color.blue);
-        Debug.DrawRay(origin, (a1 + a2), Color.cyan);
-        Debug.DrawRay(new Vector3(2,0,0), (a1+a2)/2, Color.blue);
-        Debug.DrawRay(new Vector3(1, 0, 0), (a1 + a2).normalized, Color.blue);
+        //Debug.DrawRay(origin, a1, Color.red);
+        //Debug.DrawRay(origin, a2, Color.blue);
+        //Debug.DrawRay(origin, (a1 + a2), Color.cyan);
+        //Debug.DrawRay(new Vector3(2,0,0), (a1+a2)/2, Color.blue);
+        //Debug.DrawRay(new Vector3(1, 0, 0), (a1 + a2).normalized, Color.blue);
+
+
+        Vector3 playerToEnemy = enemy.transform.position - transform.position;
+        playerToEnemy.Normalize();
+
+        // player의 전방 벡터와 player에서 enemy로 가는 벡터 사이의 각도를 계산
+        float angle = Vector3.Angle(transform.forward, playerToEnemy);
+
+        // 계산된 각도가 시야각 범위 내에 있는지 확인
+        if (angle < fieldOfView * 0.5f)
+        {
+            Debug.Log("Enemy is in the field of view");
+        }
+        else
+        {
+            Debug.Log("Enemy is out of the field of view");
+        }
+
     }
     //public int[] SetSizeArray(int[] aaa, int size, int plusNum)
     //{
@@ -102,43 +122,43 @@ public class NewBehaviourScript1 : MonoBehaviour
     //    return tmp.ToArray();
     //}
 
-    public void ccc(List<int> refv)
-    {
-        for(int i = 0; i < refv.Count; i++)
-        {
-            refv[i] += 1;
-            Debug.Log(refv[i]);
-        }
-    }
+    //public void ccc(List<int> refv)
+    //{
+    //    for(int i = 0; i < refv.Count; i++)
+    //    {
+    //        refv[i] += 1;
+    //        Debug.Log(refv[i]);
+    //    }
+    //}
 
-    public void bbb(int[] tmp)
-    {
-        for(int i = 0; i < tmp.Length; i++)
-        {
-            tmp[i] += 1;
-            Debug.Log(tmp[i]);
-        }
-    }
+    //public void bbb(int[] tmp)
+    //{
+    //    for(int i = 0; i < tmp.Length; i++)
+    //    {
+    //        tmp[i] += 1;
+    //        Debug.Log(tmp[i]);
+    //    }
+    //}
 
-    public int[] aaa(int[] tmp, int[] plusnums)
-    {
-        int size = tmp.Length + plusnums.Length;
-        int[] newTmp = new int[size];
-        for(int i = 0; i<size; i++)
-        {
-            if (i > tmp.Length)
-            {
-                for(int j = 0; j<plusnums.Length; j++)
-                {
-                    newTmp[i + j] = plusnums[j];
-                }
-                break;
-            }
-            newTmp[i] = tmp[i];
+    //public int[] aaa(int[] tmp, int[] plusnums)
+    //{
+    //    int size = tmp.Length + plusnums.Length;
+    //    int[] newTmp = new int[size];
+    //    for(int i = 0; i<size; i++)
+    //    {
+    //        if (i > tmp.Length)
+    //        {
+    //            for(int j = 0; j<plusnums.Length; j++)
+    //            {
+    //                newTmp[i + j] = plusnums[j];
+    //            }
+    //            break;
+    //        }
+    //        newTmp[i] = tmp[i];
             
-        }
-        return newTmp;
-    }
+    //    }
+    //    return newTmp;
+    //}
 
     //public int[] aaa(int[] tmp, int[] plusnums)
     //{
