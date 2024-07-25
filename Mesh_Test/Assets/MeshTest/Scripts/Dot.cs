@@ -4,33 +4,16 @@ using UnityEngine;
 
 public class TriIndexInfo
 {
-    public TriIndexInfo()
-    {
-        ;
-    }
-
+    public int srcIdx = -1;
+    public int tarIdx = -1;
+    public int remainIdx = -1;
+    public Vector3 centerPos = Vector3.zero;
     public TriIndexInfo(int cSi, int cTi, int cRi)
     {
         srcIdx = cSi;
         tarIdx = cTi;
         remainIdx = cRi;
     }
-
-    //public int[] calcTriangles(int baseIdx, int addIdx)
-    //{
-    //    return new int []{
-    //        baseIdx + srcIdx,
-    //        addIdx,
-    //        baseIdx + remainIdx,
-    //        addIdx,
-    //        baseIdx + tarIdx,
-    //        baseIdx + remainIdx };
-    //}
-
-    public int srcIdx = -1;
-    public int tarIdx = -1;
-    public int remainIdx = -1;
-    public Vector3 centerPos = Vector3.zero;
 }
 
 public class Dot : MonoBehaviour
@@ -63,7 +46,6 @@ public class Dot : MonoBehaviour
         prevNum = iterations;
     }
 
-
     void Update()
     {
         if (prevNum != iterations)
@@ -90,6 +72,7 @@ public class Dot : MonoBehaviour
 
         }
     }
+
     public int[] calcTriIdxs(int s, int e, int re, int add)
     {
         return new int[]{
@@ -101,28 +84,8 @@ public class Dot : MonoBehaviour
             re };
     }
 
-    private void Start()
-    {
-        //for (int i = 0; i < 1; i++)
-        //{
-        //    Expand(filter.mesh);
-        //}        
-    }
     void Expand(Mesh mesh)
     {
-        //Debug.Log("mesh.uv.Length : " + mesh.uv.Length);
-        //foreach (Vector2 vec in mesh.uv)
-        //{
-        //    Debug.Log(vec);
-        //}
-        //Debug.Log("----------------------------");
-
-        //Debug.Log("mesh.normals.Length : " + mesh.normals.Length);
-        //foreach (Vector3 vec in mesh.normals)
-        //{
-        //    Debug.Log(vec);
-        //}
-        //Debug.Log("----------------------------");
         var vertices = new List<Vector3>();
         var uvs = new List<Vector2>();
         var normals = new List<Vector3>();
@@ -163,10 +126,6 @@ public class Dot : MonoBehaviour
             }
 
             vertices.Add(maxTii.centerPos);
-            //foreach (Vector3 num in normals)
-            //{
-            //    debugVector(num);
-            //}
             Vector2 newUV = (uvs[refTriangles[i + maxTii.srcIdx]] + uvs[refTriangles[i + maxTii.tarIdx]]) / 2f;
             Vector3 newNormal = (normals[refTriangles[i + maxTii.srcIdx]] + normals[refTriangles[i + maxTii.tarIdx]]).normalized;
             normals.Add(newNormal);
@@ -178,85 +137,11 @@ public class Dot : MonoBehaviour
                 vertices.Count - 1);
             triangles.AddRange(newTri);
         }
+
         mesh.vertices = vertices.ToArray();
         mesh.uv = uvs.ToArray();
         mesh.normals = normals.ToArray();
         mesh.triangles = triangles.ToArray();
-        //foreach (Vector3 num in normals)
-        //{
-        //    debugVector(num);
-        //}
-        //for (int i = 0; i < mesh.triangles.Length; i += 3)
-        //{
-        //    Vector3 v0 = vertices[mesh.triangles[i]];
-        //    Vector3 v1 = vertices[mesh.triangles[i + 1]];
-        //    Vector3 v2 = vertices[mesh.triangles[i + 2]];
-
-        //    Vector3 center = Vector3.zero;
-        //    Vector3 remain = Vector3.zero;
-        //    float distance01 = Vector3.Distance(v0, v1);
-        //    float distance12 = Vector3.Distance(v1, v2);
-        //    float distance20 = Vector3.Distance(v2, v0);
-        //    int centerIndex = 0;
-        //    if (distance01 > distance12 && distance01 > distance20)
-        //    {
-        //        center = (v0 + v1) / 2;
-
-        //        vertices.Add(center);
-        //        //int centerIndex = vertices.Count - 1;
-
-        //        //triangles.Add(mesh.triangles[i]);
-        //        //triangles.Add(centerIndex);
-        //        //triangles.Add(mesh.triangles[i + 2]);
-
-        //        //triangles.Add(centerIndex);
-        //        //triangles.Add(mesh.triangles[i + 1]);
-        //        //triangles.Add(mesh.triangles[i + 2]);
-        //    }
-        //    else if (distance12 > distance01 && distance12 > distance20)
-        //    {
-        //        center = (v1 + v2) / 2;
-        //        vertices.Add(center);
-        //       // int centerIndex = vertices.Count - 1;
-
-        //        //triangles.Add(mesh.triangles[i + 1]);
-        //        //triangles.Add(centerIndex);
-        //        //triangles.Add(mesh.triangles[i]);
-
-        //        //triangles.Add(centerIndex);
-        //        //triangles.Add(mesh.triangles[i + 2]);
-        //        //triangles.Add(mesh.triangles[i]);
-        //    }
-        //    else if (distance20 > distance12 && distance20 > distance01)
-        //    {
-        //        center = (v2 + v0) / 2;
-        //        vertices.Add(center);
-        //        //int centerIndex = vertices.Count - 1;
-
-        //        //triangles.Add(mesh.triangles[i + 2]);
-        //        //triangles.Add(centerIndex);
-        //        //triangles.Add(mesh.triangles[i + 1]);
-
-        //        //triangles.Add(centerIndex);
-        //        //triangles.Add(mesh.triangles[i]);
-        //        ////triangles.Add(mesh.triangles[i + 1]);
-        //    }
-        //    centerIndex = vertices.Count - 1;
-
-        //    triangles.Add(centerIndex);
-        //    triangles.Add(mesh.triangles[i]);
-        //    triangles.Add(mesh.triangles[i + 1]);
-
-        //    triangles.Add(centerIndex);
-        //    triangles.Add(mesh.triangles[i + 1]);
-        //    triangles.Add(mesh.triangles[i + 2]);
-
-        //}
-
-
-
-        //mesh.vertices = vertices.ToArray();
-        //mesh.triangles = triangles.ToArray();
     }
 
     void debugVector(Vector3 curVec)
