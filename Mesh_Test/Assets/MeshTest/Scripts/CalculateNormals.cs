@@ -142,7 +142,7 @@ public class CalculateNormals : MonoBehaviour
         Debug.DrawRay(origin, sum, Color.red);
         if (isPrintDebug)
         {
-            Debug.Log("------------------------------------------------------------------------------------------------");
+            //Debug.Log("------------------------------------------------------------------------------------------------");
             foreach (FindCrossVector3 b in lists)
             {
                 b.PrintDebug();
