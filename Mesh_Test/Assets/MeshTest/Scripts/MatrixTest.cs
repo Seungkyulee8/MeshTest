@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MatrixTest : MonoBehaviour
 {
+    public bool StartReverse;
+    public MeshCollider meshCollider;
     public GameObject cube;
     public GameObject sphere;
     Vector3[] cubeOriginVertices;
@@ -17,40 +19,38 @@ public class MatrixTest : MonoBehaviour
 
     Vector3[] worldCubeNormals;
     Vector3[] worldSphereNormals;
-    //private void Start()
-    //{
-    //    cubeOrigin = cube.GetComponent<MeshFilter>().mesh.vertices;
-    //    sphereOrigin = sphere.GetComponent<MeshFilter>().mesh.vertices;
 
-    //    Vector3[] tempCubeOrigin = new Vector3[cubeOrigin.Length];
-    //    Vector3[] tempSphereOrigin = new Vector3[sphereOrigin.Length];
-    //    for (int i =0; i<cubeOrigin.Length; i++)
-    //    {
-    //        tempCubeOrigin[i] = cube.transform.localToWorldMatrix.inverse.MultiplyPoint(cubeOrigin[i]);
-    //    }
-    //    for(int i = 0; i< sphereOrigin.Length; i++)
-    //    {
-    //        tempSphereOrigin[i] = sphere.transform.localToWorldMatrix.inverse.MultiplyPoint(sphereOrigin[i]);
-    //    }
+    Mesh cubeMesh;
+    Mesh sphereMesh;
+    Vector3[] origingNormals;
+    Vector3[] reverseNormals;
+    int[] origin;
+    int[] reverse;
 
-    //    cubeOrigin = tempCubeOrigin;
-    //    sphereOrigin = tempSphereOrigin;
-
-    //}
     private void Start()
     {
-        cubeOriginVertices = cube.GetComponent<MeshFilter>().mesh.vertices;
-        sphereOriginVertices = sphere.GetComponent<MeshFilter>().mesh.vertices;
+        cubeMesh = cube.GetComponent<MeshFilter>().mesh;
+        sphereMesh = sphere.GetComponent<MeshFilter>().mesh;
 
+        cubeOriginVertices = cubeMesh.vertices;
+        sphereOriginVertices = sphereMesh.vertices;
 
-        cubeNormals = cube.GetComponent<MeshFilter>().mesh.normals;        
-        sphereNormals = sphere.GetComponent<MeshFilter>().mesh.normals;
+        meshCollider = cube.GetComponent<MeshCollider>();
+
+        cubeNormals = cubeMesh.normals;        
+        sphereNormals = sphereMesh.normals;
 
         worldCubeVertices = new Vector3[cubeOriginVertices.Length];
         worldSphereVertices = new Vector3[sphereOriginVertices.Length];
 
         worldCubeNormals = new Vector3[cubeNormals.Length];
         worldSphereNormals = new Vector3[sphereNormals.Length];
+
+        origingNormals = cubeMesh.normals;
+        reverseNormals = origingNormals;
+        origin = cubeMesh.triangles;
+        reverse = origin;
+
 
         for (int i = 0; i < cubeOriginVertices.Length; i++)
         {
@@ -70,15 +70,20 @@ public class MatrixTest : MonoBehaviour
         {
             worldSphereVertices[i] = sphere.transform.localToWorldMatrix.MultiplyPoint(sphereOriginVertices[i]);
         }
-        for (int i = 0; i < worldCubeVertices.Length; i++)
-        {
-            worldCubeVertices[i] *= 2.0f;
-        }
+        //for (int i = 0; i < worldCubeVertices.Length; i++)
+        //{
+        //    worldCubeVertices[i] *= 2.0f;
+        //}
 
-        for (int i = 0; i < sphereOriginVertices.Length; i++)
-        {
-            worldSphereVertices[i] /= 2.0f;
-        }
+        //GameObject obj = new GameObject("obj1");
+
+        //MeshFilter a = obj.AddComponent<MeshFilter>();
+        //a.mesh = cubeMesh;
+        //MeshRenderer b = obj.AddComponent<MeshRenderer>();
+        //b.material = cube.GetComponent<MeshRenderer>().material;
+        //a.mesh.vertices = worldCubeVertices;
+        //a.mesh.normals = worldCubeNormals;
+
         for (int i = 0; i < cubeOriginVertices.Length; i++)
         {
             worldCubeVertices[i] = cube.transform.localToWorldMatrix.inverse.MultiplyPoint(worldCubeVertices[i]);
@@ -88,46 +93,85 @@ public class MatrixTest : MonoBehaviour
         {
             worldSphereVertices[i] = sphere.transform.localToWorldMatrix.inverse.MultiplyPoint(worldSphereVertices[i]);
         }
-        Vector3 cubeCentroid = CalculateCentroid(worldCubeVertices);
-        Vector3 sphereCentroid = CalculateCentroid(worldSphereVertices);
+        cubeMesh.vertices = worldCubeVertices;
+        sphereMesh.vertices = worldSphereVertices;
 
-        Vector3 cubeOffset = -cubeCentroid;
-        Vector3 sphereOffset = -sphereCentroid;
-
-        cube.transform.position += cubeOffset;
-        sphere.transform.position += sphereOffset;
-
-        cube.GetComponent<MeshFilter>().mesh.vertices = worldCubeVertices;
-        sphere.GetComponent<MeshFilter>().mesh.vertices = worldSphereVertices;
+        ReverseFace(true);
+        AdjustColliderSize();
+        DeForm();
+ 
     }
 
-    private Vector3 CalculateCentroid(Vector3[] vertices)
+    void AdjustColliderSize()
     {
-        Vector3 centroid = Vector3.zero;
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            centroid += vertices[i];
-        }
-        centroid /= vertices.Length;
-        return centroid;
+        meshCollider.sharedMesh = cubeMesh;        
     }
-    private void Update()
-    {
-        Debug.DrawRay(Vector3.zero, Vector3.one, Color.red);
-        // 큐브의 정점(Vertex)들과 노멀(Normal)들을 순회하며 레이를 그립니다.
-        for (int i = 0; i < worldCubeVertices.Length; i++)
-        {
-            Vector3 worldVertex = cube.transform.localToWorldMatrix.MultiplyPoint(worldCubeVertices[i]);
-            Vector3 worldNormal = cube.transform.localToWorldMatrix.MultiplyVector(worldCubeNormals[i]);
-            Debug.DrawRay(worldVertex, worldNormal, Color.red);
-        }
 
-        // 구의 정점(Vertex)들과 노멀(Normal)들을 순회하며 레이를 그립니다.
+    void DeForm()
+    {
+        RaycastHit hitinfo;
+        Vector3[] changeVertices = new Vector3[worldSphereVertices.Length];
+        Dictionary<Vector3, List<Vector3>> vertexNormals = new Dictionary<Vector3, List<Vector3>>();
+
         for (int i = 0; i < worldSphereVertices.Length; i++)
         {
-            Vector3 worldVertex = sphere.transform.localToWorldMatrix.MultiplyPoint(worldSphereVertices[i]);
-            Vector3 worldNormal = sphere.transform.localToWorldMatrix.MultiplyVector(worldSphereNormals[i]);
-            Debug.DrawRay(worldVertex, worldNormal, Color.blue);
+            Vector3 worldVertex = worldSphereVertices[i];
+            Vector3 worldNormal = worldSphereNormals[i];
+
+            if (!vertexNormals.ContainsKey(worldVertex))
+            {
+                vertexNormals[worldVertex] = new List<Vector3> { worldNormal };
+            }
+            else
+            {
+                vertexNormals[worldVertex].Add(worldNormal);
+            }
         }
+        for (int i = 0; i < worldSphereVertices.Length; i++)
+        {
+            Vector3 worldVertex = worldSphereVertices[i];
+            Vector3 NormalSum = Vector3.zero;
+
+            foreach (Vector3 normal in vertexNormals[worldVertex])
+            {
+                NormalSum += normal;
+            }
+
+            if (Physics.Raycast(worldVertex, NormalSum, out hitinfo))
+            {
+                changeVertices[i] = hitinfo.point;
+            }
+        }
+        for (int i = 0; i < changeVertices.Length; i++)
+        {
+            changeVertices[i] = sphere.transform.worldToLocalMatrix.inverse.MultiplyPoint(changeVertices[i]);
+        }
+
+        sphereMesh.vertices = changeVertices;
+    }
+
+
+
+    void ReverseFace(bool result)
+    {  
+        for(int i = 0; i< reverse.Length; i+=3)
+        {
+            int tmp = reverse[i];
+            reverse[i] = reverse[i + 2];
+            reverse[i + 1] = reverse[i+1];
+            reverse[i + 2] = tmp;
+        }        
+
+        for(int i = 0; i < origingNormals.Length; i++)
+        {
+            reverseNormals[i] = -origingNormals[i];
+        }
+        if (result)
+        {
+            cubeMesh.triangles = reverse;
+            cubeMesh.normals = reverseNormals;            
+        }
+
+        
     }
 }
