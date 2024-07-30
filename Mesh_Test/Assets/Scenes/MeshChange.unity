@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -250,15 +250,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: a0c62b44435974c90a889a3b2b7ec0f9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.3878415
+      value: 5.44
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: a0c62b44435974c90a889a3b2b7ec0f9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.425467
+      value: -1.94
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: a0c62b44435974c90a889a3b2b7ec0f9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.5877899
+      value: 9.49
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: a0c62b44435974c90a889a3b2b7ec0f9, type: 3}
       propertyPath: m_LocalRotation.x
@@ -545,15 +545,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: d2733b22f87014c25b5193a107d181f6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.65
+      value: 7.6221585
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: d2733b22f87014c25b5193a107d181f6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: -2.365467
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: d2733b22f87014c25b5193a107d181f6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.199
+      value: 9.07221
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: d2733b22f87014c25b5193a107d181f6, type: 3}
       propertyPath: m_LocalRotation.x
@@ -724,7 +724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StartReverse: 0
-  meshCollider: {fileID: 0}
+  meshCollider: {fileID: 168023634}
   cube: {fileID: 168023630}
   sphere: {fileID: 2035815592}
 --- !u!4 &2023781171

@@ -37,7 +37,7 @@ public class MatrixTest : MonoBehaviour
 
         meshCollider = cube.GetComponent<MeshCollider>();
 
-        cubeNormals = cubeMesh.normals;        
+        cubeNormals = cubeMesh.normals;
         sphereNormals = sphereMesh.normals;
 
         worldCubeVertices = new Vector3[cubeOriginVertices.Length];
@@ -52,15 +52,15 @@ public class MatrixTest : MonoBehaviour
         reverse = origin;
 
 
-        for (int i = 0; i < cubeOriginVertices.Length; i++)
-        {
-            worldCubeVertices[i] = cube.transform.localToWorldMatrix.MultiplyPoint(cubeOriginVertices[i]);
-        }
+        //for (int i = 0; i < cubeOriginVertices.Length; i++)
+        //{
+        //    worldCubeVertices[i] = cube.transform.localToWorldMatrix.MultiplyPoint(cubeOriginVertices[i]);
+        //}
 
-        for (int i = 0; i < cubeNormals.Length; i++)
-        {
-            worldCubeNormals[i] = cube.transform.localToWorldMatrix.MultiplyVector(cubeNormals[i]);
-        }
+        //for (int i = 0; i < cubeNormals.Length; i++)
+        //{
+        //    worldCubeNormals[i] = cube.transform.localToWorldMatrix.MultiplyVector(cubeNormals[i]);
+        //}
         for (int i = 0; i < sphereNormals.Length; i++)
         {
             worldSphereNormals[i] = sphere.transform.localToWorldMatrix.MultiplyVector(sphereNormals[i]);
@@ -74,37 +74,38 @@ public class MatrixTest : MonoBehaviour
         //{
         //    worldCubeVertices[i] *= 2.0f;
         //}
-
+        //for (int i = 0; i < cubeOriginVertices.Length; i++)
+        //{
+        //    worldCubeVertices[i] = cube.transform.localToWorldMatrix.inverse.MultiplyPoint(worldCubeVertices[i]);
+        //}
         //GameObject obj = new GameObject("obj1");
 
         //MeshFilter a = obj.AddComponent<MeshFilter>();
         //a.mesh = cubeMesh;
+        //a.mesh.vertices = worldCubeVertices;
+        ////a.mesh.normals = worldCubeNormals;
         //MeshRenderer b = obj.AddComponent<MeshRenderer>();
         //b.material = cube.GetComponent<MeshRenderer>().material;
-        //a.mesh.vertices = worldCubeVertices;
-        //a.mesh.normals = worldCubeNormals;
 
-        for (int i = 0; i < cubeOriginVertices.Length; i++)
-        {
-            worldCubeVertices[i] = cube.transform.localToWorldMatrix.inverse.MultiplyPoint(worldCubeVertices[i]);
-        }
 
-        for (int i = 0; i < sphereOriginVertices.Length; i++)
-        {
-            worldSphereVertices[i] = sphere.transform.localToWorldMatrix.inverse.MultiplyPoint(worldSphereVertices[i]);
-        }
-        cubeMesh.vertices = worldCubeVertices;
+
+
+        //for (int i = 0; i < sphereOriginVertices.Length; i++)
+        //{
+        //    worldSphereVertices[i] = sphere.transform.localToWorldMatrix.inverse.MultiplyPoint(worldSphereVertices[i]);
+        //}
+        //cubeMesh.vertices = worldCubeVertices;
         sphereMesh.vertices = worldSphereVertices;
 
         ReverseFace(true);
         AdjustColliderSize();
         DeForm();
- 
+
     }
 
     void AdjustColliderSize()
     {
-        meshCollider.sharedMesh = cubeMesh;        
+        meshCollider.sharedMesh = cubeMesh;
     }
 
     void DeForm()
@@ -137,14 +138,15 @@ public class MatrixTest : MonoBehaviour
                 NormalSum += normal;
             }
 
-            if (Physics.Raycast(worldVertex, NormalSum, out hitinfo))
+            if (Physics.Raycast(worldVertex, NormalSum.normalized, out hitinfo))
             {
                 changeVertices[i] = hitinfo.point;
             }
+
         }
         for (int i = 0; i < changeVertices.Length; i++)
         {
-            changeVertices[i] = sphere.transform.worldToLocalMatrix.inverse.MultiplyPoint(changeVertices[i]);
+            changeVertices[i] = sphere.transform.worldToLocalMatrix.MultiplyPoint(changeVertices[i]);
         }
 
         sphereMesh.vertices = changeVertices;
@@ -153,25 +155,25 @@ public class MatrixTest : MonoBehaviour
 
 
     void ReverseFace(bool result)
-    {  
-        for(int i = 0; i< reverse.Length; i+=3)
+    {
+        for (int i = 0; i < reverse.Length; i += 3)
         {
             int tmp = reverse[i];
             reverse[i] = reverse[i + 2];
-            reverse[i + 1] = reverse[i+1];
+            reverse[i + 1] = reverse[i + 1];
             reverse[i + 2] = tmp;
-        }        
+        }
 
-        for(int i = 0; i < origingNormals.Length; i++)
+        for (int i = 0; i < origingNormals.Length; i++)
         {
             reverseNormals[i] = -origingNormals[i];
         }
         if (result)
         {
             cubeMesh.triangles = reverse;
-            cubeMesh.normals = reverseNormals;            
+            cubeMesh.normals = reverseNormals;
         }
 
-        
+
     }
 }
